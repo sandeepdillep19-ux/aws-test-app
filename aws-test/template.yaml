@@ -67,3 +67,23 @@ Resources:
       DefaultActions:
       - Type: forward
         TargetGroupArn: !Ref MyTargetGroup
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-0c94855ba95c71c99
+        InstanceType: t2.micro
+        SecurityGroupIds:
+        - !Ref EC2SecurityGroup
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+      - !Ref MySubNet
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MinSize: 1
+      MaxSize: 3
+      TargetGroupARNs:
+      - !Ref MyTargetGroup
